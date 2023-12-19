@@ -5,6 +5,8 @@ from yaml import Loader
 
 
 def replace_code_with_values(df, schema, table, field):
+    df[field] = df[field].astype(str)
+
     return df.replace(
         {
             field: schema.loc[
@@ -31,6 +33,7 @@ def main():
         schema = pd.read_excel(remote_schema_path)
         schema.to_csv(local_schema_path, index=False)
 
+    schema["label"] = schema["label"].str.lower()
     # ====================== COLLISIONS ===================================== #
 
     remote_collision_path = params["base_dft_url"] + params["collision_file_name"]
@@ -39,7 +42,7 @@ def main():
     )
 
     try:
-        collisions = pd.read_csv(local_collision_path)
+        collisions = pd.read_csv(local_collision_path, low_memory=False)
     except FileNotFoundError:
         collisions = pd.concat(
             [
@@ -53,7 +56,6 @@ def main():
         collisions.to_csv(local_collision_path, index=False)
 
     collision_cols = params["collision_columns"]
-
     cleaned_collisions = (
         collisions[collision_cols]
         .pipe(
@@ -76,15 +78,12 @@ def main():
     local_casualty_path = "data_dft/" + params["casualty_file_name"].format(year="all")
 
     try:
-        casualties = pd.read_csv(local_casualty_path)
+        casualties = pd.read_csv(local_casualty_path, low_memory=False)
 
     except FileNotFoundError:
         casualties = pd.concat(
             [
-                pd.read_csv(
-                    remote_casualty_path.format(year=year),
-                    low_memory=False,
-                )
+                pd.read_csv(remote_casualty_path.format(year=year), low_memory=False)
                 for year in params["dft_data_years"]
             ]
         )
