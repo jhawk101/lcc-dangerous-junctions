@@ -13,8 +13,8 @@ valid_junction_types:
 #    - "Private drive or entrance"
 
 valid_casualty_types:
-  - Cyclist
-  - Pedestrian
+  - cyclist
+  - pedestrian
 
 # tolerance level to determine which junctions to combine (in metres)
 tolerance: 15

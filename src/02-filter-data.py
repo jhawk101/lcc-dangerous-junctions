@@ -18,9 +18,9 @@ def accident_severity_counts(row):
     severities = row['casualty_severity']
     severities = severities.tolist()
     
-    fatal = severities.count('Fatal')
-    serious = severities.count('Serious')
-    slight = severities.count('Slight')
+    fatal = severities.count('fatal')
+    serious = severities.count('serious')
+    slight = severities.count('slight')
     
     return fatal, serious, slight
 
@@ -61,7 +61,7 @@ def recalculate_severity(casualties, mode_of_travel):
         .reset_index()
     )
 
-    if mode_of_travel == 'Cyclist':
+    if mode_of_travel == 'cyclist':
         casualty_type = 'cyclist'
     else:
         casualty_type = mode_of_travel
@@ -114,8 +114,8 @@ def main():
 
     print('Recalculate severities and danger metrics')
     min_year = min(collisions['year'])
-    recalculated_cyclist_severities = recalculate_severity(casualties, 'Cyclist')
-    recalculated_pedestrian_severities = recalculate_severity(casualties, 'Pedestrian')
+    recalculated_cyclist_severities = recalculate_severity(casualties, 'cyclist')
+    recalculated_pedestrian_severities = recalculate_severity(casualties, 'pedestrian')
 
     # # join back to the datasets with severity in it
     collisions = (
@@ -129,9 +129,9 @@ def main():
     )
 
     collisions.loc[:, 'is_cyclist_collision'] = False
-    collisions.loc[:, 'is_Pedestrian_collision'] = False
+    collisions.loc[:, 'is_pedestrian_collision'] = False
     collisions.loc[~collisions['max_cyclist_severity'].isnull(), 'is_cyclist_collision'] = True
-    collisions.loc[~collisions['max_Pedestrian_severity'].isnull(), 'is_Pedestrian_collision'] = True
+    collisions.loc[~collisions['max_pedestrian_severity'].isnull(), 'is_pedestrian_collision'] = True
 
     print('Example data')
     print(collisions)
@@ -146,7 +146,7 @@ def main():
 
     print('Pedestrian collisions per year check')
     print(
-        collisions[collisions['is_Pedestrian_collision']]
+        collisions[collisions['is_pedestrian_collision']]
         .groupby('year')
         ['accident_index']
         .nunique()
