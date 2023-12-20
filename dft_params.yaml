@@ -1,16 +1,16 @@
 ---
 # junction types to include from the junction_detail field
 valid_junction_types:
-  - "Crossroads"
-  - "Other junction"
-  #    - "Not at junction or within 20 metres"
-  - "Slip road"
-  - "T or staggered junction"
-  - "More than 4 arms (not roundabout)"
-  - "Roundabout"
-  - "Mini-roundabout"
+  - "crossroads"
+  - "other junction"
+#  - "not at junction or within 20 metres"
+  - "slip road"
+  - "t or staggered junction"
+  - "more than 4 arms (not roundabout)"
+  - "roundabout"
+  - "mini-roundabout"
   - "unknown (self reported)"
-#    - "Private drive or entrance"
+#  - "private drive or entrance"
 
 valid_casualty_types:
   - cyclist
