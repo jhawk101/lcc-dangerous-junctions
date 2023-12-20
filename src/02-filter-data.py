@@ -1,6 +1,6 @@
 """
 This takes a set of collision data cleaned with the stats19 data and cleans it further for use by LCC, including:
-- Filtering to London
+- Filtering to London # JH note - doesn't do this
 - Filtering to collisions at junctions only
 - Weights the severity of collisions
 """
@@ -55,13 +55,13 @@ def recalculate_severity(casualties, mode_of_travel):
     '''
     recalculated_severities = (
         casualties
-        [casualties['mode_of_travel'] == mode_of_travel]
-        .groupby(['collision_id'])
+        [casualties['casualty_type'] == mode_of_travel]
+        .groupby(['accident_index'])
         .apply(accident_severity_counts)
         .reset_index()
     )
 
-    if mode_of_travel == 'pedal_cycle':
+    if mode_of_travel == 'cyclist':
         casualty_type = 'cyclist'
     else:
         casualty_type = mode_of_travel
@@ -89,12 +89,11 @@ def recalculate_severity(casualties, mode_of_travel):
 
 def main():
 
-    # read in data processing params from params.yaml
-    params = yaml.load(open("params.yaml", 'r'), Loader=Loader)
+    params = yaml.load(open("dft_params.yaml", 'r'), Loader=Loader)
 
     print('Reading in data')
-    collisions = pd.read_csv('data/collisions.csv', low_memory=False)
-    casualties = pd.read_csv('data/casualties.csv', low_memory=False)
+    collisions = pd.read_csv('data_dft/collisions.csv', low_memory=False)
+    casualties = pd.read_csv('data_dft/casualties.csv', low_memory=False)
 
     # filter to junctions
     print('Filter to Junctions')
@@ -105,24 +104,24 @@ def main():
 
     # pull out all cyclist and pedestrian crash ids
     valid_crash_ids = casualties[
-        casualties['mode_of_travel'].isin(params['valid_casualty_types'])
-    ]['collision_id'].unique()
+        casualties['casualty_type'].isin(params['valid_casualty_types'])
+    ]['accident_index'].unique()
 
     print(f'Filter to cyclist & pedestrian collisions, {len(valid_crash_ids)} crash IDs in data')
 
-    collisions = collisions[collisions.collision_id.isin(valid_crash_ids)]
-    casualties = casualties[casualties.collision_id.isin(valid_crash_ids)]
+    collisions = collisions[collisions.accident_index.isin(valid_crash_ids)]
+    casualties = casualties[casualties.accident_index.isin(valid_crash_ids)]
 
     print('Recalculate severities and danger metrics')
     min_year = min(collisions['year'])
-    recalculated_cyclist_severities = recalculate_severity(casualties, 'pedal_cycle')
+    recalculated_cyclist_severities = recalculate_severity(casualties, 'cyclist')
     recalculated_pedestrian_severities = recalculate_severity(casualties, 'pedestrian')
 
     # # join back to the datasets with severity in it
     collisions = (
         collisions
-        .merge(recalculated_cyclist_severities, how='left', on='collision_id')
-        .merge(recalculated_pedestrian_severities, how='left', on='collision_id')
+        .merge(recalculated_cyclist_severities, how='left', on='accident_index')
+        .merge(recalculated_pedestrian_severities, how='left', on='accident_index')
     )
     
     collisions['recency_weight'] = collisions.apply(
@@ -141,7 +140,7 @@ def main():
     print(
         collisions[collisions['is_cyclist_collision']]
         .groupby('year')
-        ['collision_id']
+        ['accident_index']
         .nunique()
     )
 
@@ -149,13 +148,13 @@ def main():
     print(
         collisions[collisions['is_pedestrian_collision']]
         .groupby('year')
-        ['collision_id']
+        ['accident_index']
         .nunique()
     )
 
     # output csvs
     print('Output to csv')
-    collisions.to_csv('data/pedestrian-and-cyclist-collisions.csv', index=False)
+    collisions.to_csv('data_dft/pedestrian-and-cyclist-collisions.csv', index=False)
 
 
 if __name__ == "__main__":

@@ -106,7 +106,7 @@ def name_junctions(lower_level_graph, nodes_df: pd.DataFrame) -> pd.DataFrame:
         cluster_names,
         how='left',
         on='junction_cluster_id',
-        suffixes=['', '_cluster']
+        suffixes=('', '_cluster'),
     )
 
     nodes_df['junction_cluster_name'] = nodes_df['name_cluster'].apply(list_to_string_name)
@@ -142,14 +142,14 @@ def name_junctions(lower_level_graph, nodes_df: pd.DataFrame) -> pd.DataFrame:
 def main():
 
     # read in data params
-    params = yaml.load(open("params.yaml", 'r'), Loader=Loader)
+    params = yaml.load(open("dft_params.yaml", 'r'), Loader=Loader)
 
     tolerance = params['tolerance']
 
     # build initial junctions graph
     print('Building initial junction graph')
     G1 = ox.graph_from_place(
-        'Greater London, UK',  # critical to use greater london, the city of London is not included otherwsie!!
+        'Bradford, UK',  # critical to use greater london, the city of London is not included otherwsie!!
         network_type='drive',
         simplify=True,
         clean_periphery=True
@@ -171,7 +171,7 @@ def main():
         reconnect_edges=True
     )
 
-    # create datafraems from G1 & G2
+    # create dataframes from G1 & G2
     df_lower = (
         ox.graph_to_gdfs(
             G1,
@@ -263,9 +263,9 @@ def main():
     print('Naming junctions')
     df = name_junctions(G1, df)
 
-    print(f'Outputing data: data/junctions-tolerance={tolerance}.csv')
-    df.to_csv(f'data/junctions-tolerance={tolerance}.csv', index=False)
-    df.to_parquet(f'data/junctions-tolerance={tolerance}.parquet', engine='pyarrow')
+    print(f'Outputing data: data_dft/junctions-tolerance={tolerance}.csv')
+    df.to_csv(f'data_dft/junctions-tolerance={tolerance}.csv', index=False)
+    df.to_parquet(f'data_dft/junctions-tolerance={tolerance}.parquet', engine='pyarrow')
 
 
 if __name__ == "__main__":
