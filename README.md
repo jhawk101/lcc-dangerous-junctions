@@ -27,16 +27,17 @@ The current method used to identify dangerous junctions works as follows:
     - Fatal - 6.8
     - Serious - 1
     - Slight - .06
-      
+
 6. Weight each collision based on how recent the collision was, since junctions may have changed in the last few years. The exact formula in Python is: `recency_weight = np.log10(year - min_year + 5)`. For example, a collision in 2020 where the minimum year in the data was 2018 would be weighted as: `log10(2020 - 2018 + 5) = log10(7) = .85`.
 
 7. Aggregate the collisions across each junction to get a 'recency_danger_metric' for each junction. These are then ranked from highest to lowest to generate a list of the most dangerous junctions for either cyclists or pedestrians.
 
 8. This data is then visualised in the [app](https://lcc-dangerous-junctions.streamlit.app/).
-   
+
 ## Using this code
 
 To run and develop on this code:
+
 - Clone the repo
 - Make sure Python installed
 - Setup a virtual environment, e.g: ```python3.8 -m venv venv```
@@ -55,6 +56,7 @@ You should now be setup to run the notebooks in `notebooks/` and the streamlit a
 ## References
 
 - [OSMnx](https://github.com/gboeing/osmnx/tree/main) - this package was used to generate the junction network for London, which the collisions are mapped to. Original paper:
+
 > Boeing, G. 2017. "OSMnx: New Methods for Acquiring, Constructing, Analyzing, and Visualizing Complex Street Networks." Computers, Environment and Urban Systems 65, 126-139.
 
 - Collision data is taken from TfL's "Collision data extracts" that can be accessed [here](https://tfl.gov.uk/corporate/publications-and-reports/road-safety)

@@ -13,10 +13,10 @@ from st_files_connection import FilesConnection
 
 
 # read in data params
-DATA_PARAMETERS = yaml.load(open("params.yaml", "r"), Loader=Loader)
+DATA_PARAMETERS = yaml.load(open("params_dft.yaml", "r"), Loader=Loader)
 
 # set as "prod" in the hosted environment
-ENVIRONMENT = "dev" # os.environ.get("ENVIRONMENT", "prod")
+ENVIRONMENT = "dev"  # os.environ.get("ENVIRONMENT", "prod")
 
 
 @st.cache_data(show_spinner=False, ttl=24 * 60 * 60, max_entries=1)
@@ -27,12 +27,12 @@ def read_in_data(params: dict = DATA_PARAMETERS) -> tuple:
     """
     if ENVIRONMENT == "dev":
         junctions = pd.read_parquet(
-            f"data/junctions-tolerance=15.parquet",
+            "data_dft/junctions-tolerance=15.parquet",
             engine="pyarrow",
             columns=params["junction_app_columns"],
         )
         collisions = pd.read_parquet(
-            f"data/collisions-tolerance=15.parquet",
+            "data_dft/collisions-tolerance=15.parquet",
             engine="pyarrow",
             columns=params["collision_app_columns"],
         )
@@ -51,10 +51,10 @@ def read_in_data(params: dict = DATA_PARAMETERS) -> tuple:
             columns=params["collision_app_columns"],
         )
 
-    try:
-        junction_notes = pd.read_csv(st.secrets["junction_notes"])
-    except FileNotFoundError:
-        junction_notes = pd.DataFrame(columns=["junction_cluster_id", "notes"])
+        # try:
+        #     # junction_notes = pd.read_csv(st.secrets["junction_notes"])
+        # except FileNotFoundError:
+    junction_notes = pd.DataFrame(columns=["junction_cluster_id", "notes"])
 
     return junctions, collisions, junction_notes
 
@@ -65,7 +65,7 @@ def combine_junctions_and_collisions(
     collisions: pd.DataFrame,
     notes: pd.DataFrame,
     casualty_type: str,
-    boroughs: str,
+    boroughs: str = None,
 ) -> pd.DataFrame:
     """
     Combines the junction and collision datasets, as well as filters by years chosen in app.
@@ -82,10 +82,10 @@ def combine_junctions_and_collisions(
     ).merge(notes, how="left", on="junction_cluster_id")
     junction_collisions.loc[junction_collisions["notes"].isna(), "notes"] = ""
 
-    if "ALL" not in boroughs:
-        junction_collisions = junction_collisions[
-            junction_collisions["borough"].isin(boroughs)
-        ]
+    # if "ALL" not in boroughs:
+    #     junction_collisions = junction_collisions[
+    #         junction_collisions["borough"].isin(boroughs)
+    #     ]
 
     junction_collisions["danger_metric"] = junction_collisions.apply(
         lambda row: get_danger_metric(row, casualty_type), axis=1
@@ -354,14 +354,14 @@ def create_base_map(initial_location: list, initial_zoom: int) -> folium.Map:
         tiles="cartodbpositron", location=initial_location, zoom_start=initial_zoom
     )
 
-    borough_geo = "london_boroughs.geojson"
-    folium.Choropleth(
-        geo_data=borough_geo,
-        line_color="#5DADE2",
-        fill_opacity=0,
-        line_opacity=0.5,
-        overlay=False,
-    ).add_to(m)
+    # borough_geo = "london_boroughs.geojson"
+    # folium.Choropleth(
+    #     geo_data=borough_geo,
+    #     line_color="#5DADE2",
+    #     fill_opacity=0,
+    #     line_opacity=0.5,
+    #     overlay=False,
+    # ).add_to(m)
 
     return m
 

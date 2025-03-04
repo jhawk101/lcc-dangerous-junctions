@@ -48,7 +48,7 @@ def combine_names(names) -> list:
 
 def shorten_road_names(name: str) -> str:
     """
-    Shortern elements of road names to save space
+    Shorten elements of road names to save space
     """
     replacements = {
         "Avenue": "Ave",
@@ -136,24 +136,20 @@ def name_junctions(lower_level_graph, nodes_df: pd.DataFrame) -> pd.DataFrame:
 
 def main():
     # read in data params
-    params = yaml.load(open("params.yaml", "r"), Loader=Loader)
+    params = yaml.load(open("params_dft.yaml", "r"), Loader=Loader)
 
     tolerance = params["tolerance"]
 
     # build initial junctions graph
     print("Building initial junction graph")
-    G1 = ox.graph_from_place(
-        "Greater London, UK",  # critical to use greater london, the city of London is not included otherwsie!!
-        network_type="drive",
-        simplify=True,
-        clean_periphery=True,
-    )
-    # for testing use:
-    # G1 = ox.graph_from_address(
-    #     'Greater London, UK',
-    #     network_type='drive',
-    #     dist=1000
+    # G1 = ox.graph_from_place(
+    #     "Bradford, UK",
+    #     network_type="drive",
+    #     simplify=True,
+    #     clean_periphery=True,
     # )
+    # for testing use:
+    G1 = ox.graph_from_address("Bradford, UK", network_type="drive", dist=1000)
 
     # simplify graph using the consolidate_intersections()
     print("Consolidating intersections")
@@ -165,7 +161,7 @@ def main():
         reconnect_edges=True,
     )
 
-    # create datafraems from G1 & G2
+    # create dataframes from G1 & G2
     df_lower = (
         ox.graph_to_gdfs(
             G1, nodes=True, edges=False, node_geometry=True, fill_edge_geometry=False
@@ -185,7 +181,7 @@ def main():
     # This is because we want to map collisions to the lower level and then aggregate at the higher level.
     #
     # For this we need to flatten the df_higher dataframe so we can join the datasets.
-    print("Creating junction heirarchy")
+    print("Creating junction hierarchy")
 
     df_higher["osmid_original"] = df_higher["osmid_original"].apply(
         convert_strings_list
@@ -239,10 +235,14 @@ def main():
     df = name_junctions(G1, df)
 
     print(
-        f"Outputing data: data/junctions-tolerance={tolerance}.csv & data/junctions-tolerance={tolerance}.parquet"
+        f"Outputting data: data/junctions-tolerance={tolerance}.csv & data/junctions-tolerance={tolerance}.parquet"
     )
-    df.to_csv(f"data/junctions-tolerance={tolerance}.csv", index=False)
-    df.to_parquet(f"data/junctions-tolerance={tolerance}.parquet", engine="pyarrow")
+    df.to_csv(f"data_dft/junctions-tolerance={tolerance}.csv", index=False)
+    df.to_parquet(
+        f"data_dft/junctions-tolerance={tolerance}.parquet",
+        engine="pyarrow",
+        index=False,
+    )  # TODO fix tolerance field
 
 
 if __name__ == "__main__":

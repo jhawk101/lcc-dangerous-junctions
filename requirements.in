@@ -2,6 +2,7 @@ convertbng
 gcsfs
 folium
 osmnx
+pandera
 pip-tools
 psutil
 pympler

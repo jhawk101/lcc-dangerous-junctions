@@ -6,11 +6,11 @@ import streamlit as st
 from src.app_functions import *
 from streamlit_folium import st_folium
 
-st.set_page_config(layout='wide')
+st.set_page_config(layout="wide")
 
 # apply css styling
-with open('./css/style.css') as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+with open("./css/style.css") as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 st.markdown(
     """
@@ -23,10 +23,13 @@ st.markdown(
         </div>
         </header>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
-@st.dialog("Welcome to the London Cycling Campaign's Dangerous Junctions Tool", width="large")
+
+@st.dialog(
+    "Welcome to the London Cycling Campaign's Dangerous Junctions Tool", width="large"
+)
 def open_pop_up():
     st.markdown("""
         The tool displays the most dangerous junctions in London for either
@@ -40,173 +43,179 @@ def open_pop_up():
         - Slightly adjusted fatal, serious & slight collision weights (see 'About this app')
     """)
 
-if 'pop_up_opened' not in st.session_state:
+
+if "pop_up_opened" not in st.session_state:
     open_pop_up()
-    st.session_state['pop_up_opened'] = True
+    st.session_state["pop_up_opened"] = True
 
 
 junctions, collisions, notes = read_in_data()
-min_year = np.min(collisions['year'])
-max_year = np.max(collisions['year'])
+min_year = np.min(collisions["year"])
+max_year = np.max(collisions["year"])
 
 
 with st.expander("App settings", expanded=True):
-    with st.form(key='form'):
+    with st.form(key="form"):
         col1, col2, col3, col4 = st.columns([2, 4, 4, 2])
         with col1:
             casualty_type = st.radio(
-                label='Select casualty type',
-                options=['cyclist', 'pedestrian'],
-                format_func=lambda x: f'{x}s',
-                horizontal=True
+                label="Select casualty type",
+                options=["cyclist", "pedestrian"],
+                format_func=lambda x: f"{x}s",
+                horizontal=True,
             )
         with col2:
             n_junctions = st.slider(
-                label='Number of dangerous junctions to show',
+                label="Number of dangerous junctions to show",
                 min_value=10,
                 max_value=100,  # not sure we'd ever need to view more then 100?
                 value=20,
-                step=10
+                step=10,
             )
-        with col3:
-            available_boroughs = sorted(
-                list(
-                    collisions['borough'].dropna().unique()
-                )
-            )
-            boroughs = st.multiselect(
-                label='Filter by borough',
-                options=['ALL'] + available_boroughs,
-                default='ALL'
-            )
+        # with col3:
+        #     available_boroughs = sorted(
+        #         list(
+        #             collisions['borough'].dropna().unique()
+        #         )
+        #     )
+        #     boroughs = st.multiselect(
+        #         label='Filter by borough',
+        #         options=['ALL'] + available_boroughs,
+        #         default='ALL'
+        #     )
         with col4:
-            st.markdown('<br>', unsafe_allow_html=True)  # padding
-            submit = st.form_submit_button(label='Recalculate Junctions', type='primary', use_container_width=True)
+            st.markdown("<br>", unsafe_allow_html=True)  # padding
+            submit = st.form_submit_button(
+                label="Recalculate Junctions", type="primary", use_container_width=True
+            )
 
-
-if len(boroughs) == 0:
-    st.warning('Please select at least one borough and recalculate', icon='⚠️')
-else:
+    # if len(boroughs) == 0:
+    #     st.warning("Please select at least one borough and recalculate", icon="⚠️")
+    # else:
     junction_collisions = combine_junctions_and_collisions(
         junctions,
         collisions,
         notes,
-        casualty_type,
-        boroughs
+        casualty_type,  # boroughs
     )
     dangerous_junctions = calculate_dangerous_junctions(
-        junction_collisions,
-        n_junctions,
-        casualty_type
+        junction_collisions, n_junctions, casualty_type
     )
 
     # set default to worst junction...
     if (
-        ('chosen_point' not in st.session_state) or
-        (casualty_type != st.session_state['previous_casualty_type']) or
-        (boroughs != st.session_state['previous_boroughs'])
+        ("chosen_point" not in st.session_state)
+        or (casualty_type != st.session_state["previous_casualty_type"])
+        # or (boroughs != st.session_state["previous_boroughs"])
     ):
-        st.session_state['chosen_point'] = dangerous_junctions[['latitude_cluster', 'longitude_cluster']].values[0]
+        st.session_state["chosen_point"] = dangerous_junctions[
+            ["latitude_cluster", "longitude_cluster"]
+        ].values[0]
 
-    st.session_state['previous_casualty_type'] = casualty_type
-    st.session_state['previous_boroughs'] = boroughs
+    st.session_state["previous_casualty_type"] = casualty_type
+    # st.session_state["previous_boroughs"] = boroughs
 
     col1, col2 = st.columns([6, 6])
     with col1:
-        if 'ALL' in boroughs:
-            borough_msg = 'all boroughs'
-        else:
-            borough_msg = ', '.join([b.capitalize() for b in boroughs])
+        # if "ALL" in boroughs:
+        #     borough_msg = "all boroughs"
+        # else:
+        #     borough_msg = ", ".join([b.capitalize() for b in boroughs])
 
-        st.markdown(f'''
-            #### Dangerous Junctions
+        # st.markdown(f"""
+        #     #### Dangerous Junctions
 
-            Map shows the {n_junctions} most dangerous junctions in {borough_msg} from {min_year} to {max_year}.
-        ''')
+        #     Map shows the {n_junctions} most dangerous junctions in {borough_msg} from {min_year} to {max_year}.
+        # """)
 
-        high_map = create_base_map(initial_location=[51.5080, -.1281], initial_zoom=10)  # set to trafalgar sq.
+        high_map = create_base_map(
+            initial_location=[53.799999, -1.750000], initial_zoom=10
+        )  # set to trafalgar sq.
 
-        high_feature_group = get_high_level_fg(dangerous_junctions, junction_collisions, n_junctions)
+        high_feature_group = get_high_level_fg(
+            dangerous_junctions, junction_collisions, n_junctions
+        )
         map_click = st_folium(
             high_map,
             feature_group_to_add=high_feature_group,
-            returned_objects=['last_object_clicked'],
+            returned_objects=["last_object_clicked"],
             use_container_width=True,
             height=500,
-            key='high_map'
+            key="high_map",
         )
 
-        if map_click['last_object_clicked']:
-            st.session_state['chosen_point'] = [
-                map_click['last_object_clicked']['lat'],
-                map_click['last_object_clicked']['lng']
+        if map_click["last_object_clicked"]:
+            st.session_state["chosen_point"] = [
+                map_click["last_object_clicked"]["lat"],
+                map_click["last_object_clicked"]["lng"],
             ]
 
     with col2:
-        st.markdown('''
+        st.markdown("""
             #### Investigate Junction
 
             Select a point on the left map and drill down into it here.
-        ''')
+        """)
 
         initial_junction_location = get_most_dangerous_junction_location(
             dangerous_junctions.head(1)
         )
-        low_map = create_base_map(initial_location=initial_junction_location, initial_zoom=18)
+        low_map = create_base_map(
+            initial_location=initial_junction_location, initial_zoom=18
+        )
 
         low_feature_group = get_low_level_fg(
-            dangerous_junctions,
-            junction_collisions,
-            n_junctions,
-            casualty_type
+            dangerous_junctions, junction_collisions, n_junctions, casualty_type
         )
         st_folium(
             low_map,
             feature_group_to_add=low_feature_group,
-            center=st.session_state['chosen_point'],
+            center=st.session_state["chosen_point"],
             returned_objects=[],
             use_container_width=True,
             height=500,
-            key='low_map'
+            key="low_map",
         )
 
 
-st.markdown(f'''
+st.markdown(f"""
     #### Danger Metrics
             
     Junctions ranked from most to least dangerous
-''')
+""")
 
 st.dataframe(
-    dangerous_junctions[[
-        'junction_rank',
-        'junction_cluster_name',
-        'recency_danger_metric',
-        f'fatal_{casualty_type}_casualties',
-        f'serious_{casualty_type}_casualties',
-        f'slight_{casualty_type}_casualties',
-        'yearly_danger_metrics'
-    ]],
+    dangerous_junctions[
+        [
+            "junction_rank",
+            "junction_cluster_name",
+            "recency_danger_metric",
+            f"fatal_{casualty_type}_casualties",
+            f"serious_{casualty_type}_casualties",
+            f"slight_{casualty_type}_casualties",
+            "yearly_danger_metrics",
+        ]
+    ],
     column_config={
-        'junction_rank': 'Junction rank',
-        'junction_cluster_name': 'Junction name',
-        'recency_danger_metric': st.column_config.NumberColumn(
-            'Danger metric',
-            format='%.2f',
-            help='Danger metric including recency scaling'
+        "junction_rank": "Junction rank",
+        "junction_cluster_name": "Junction name",
+        "recency_danger_metric": st.column_config.NumberColumn(
+            "Danger metric",
+            format="%.2f",
+            help="Danger metric including recency scaling",
         ),
-        f'fatal_{casualty_type}_casualties': f'Fatal {casualty_type} collisions',
-        f'serious_{casualty_type}_casualties': f'Serious {casualty_type} collisions',
-        f'slight_{casualty_type}_casualties': f'Slight {casualty_type} collisions',
-        'yearly_danger_metrics': st.column_config.LineChartColumn(
+        f"fatal_{casualty_type}_casualties": f"Fatal {casualty_type} collisions",
+        f"serious_{casualty_type}_casualties": f"Serious {casualty_type} collisions",
+        f"slight_{casualty_type}_casualties": f"Slight {casualty_type} collisions",
+        "yearly_danger_metrics": st.column_config.LineChartColumn(
             "Yearly danger metrics (past 5 years)",
-            help='Last 5 years of danger metrics (recency scaled removed)',
+            help="Last 5 years of danger metrics (recency scaled removed)",
             y_min=0,
-            y_max=10
+            y_max=10,
         ),
     },
     use_container_width=True,
-    hide_index=True
+    hide_index=True,
 )
 
 with st.expander("About this app"):
@@ -293,7 +302,9 @@ with st.expander("About this app"):
 # for key, val in get_highest_memory_objects(locals()).items():
 #     logging.info(f'{key}: {val} MB')
 
-st.session_state['current_memory_usage'] = psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2
+st.session_state["current_memory_usage"] = (
+    psutil.Process(os.getpid()).memory_info().rss / 1024**2
+)
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+logging.basicConfig(format="%(asctime)s - %(message)s", level=logging.INFO)
 logging.info(f"Current memory usage: {st.session_state['current_memory_usage']} MB")

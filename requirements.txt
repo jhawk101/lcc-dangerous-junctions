@@ -10,6 +10,8 @@ aiosignal==1.3.1
     # via aiohttp
 altair==5.0.1
     # via streamlit
+annotated-types==0.7.0
+    # via pydantic
 async-timeout==4.0.3
     # via aiohttp
 attrs==23.1.0
@@ -115,6 +117,7 @@ importlib-metadata==6.11.0
     # via
     #   build
     #   fiona
+    #   typeguard
 importlib-resources==6.4.0
     # via matplotlib
 jinja2==3.1.2
@@ -144,6 +147,8 @@ multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
+mypy-extensions==1.0.0
+    # via typing-inspect
 networkx==3.2.1
     # via osmnx
 numpy==1.24.4
@@ -155,6 +160,7 @@ numpy==1.24.4
     #   matplotlib
     #   osmnx
     #   pandas
+    #   pandera
     #   pyarrow
     #   pydeck
     #   scikit-learn
@@ -171,14 +177,18 @@ packaging==23.1
     #   build
     #   geopandas
     #   matplotlib
+    #   pandera
     #   streamlit
 pandas==2.2.1
     # via
     #   altair
     #   geopandas
     #   osmnx
+    #   pandera
     #   seaborn
     #   streamlit
+pandera==0.23.0
+    # via -r requirements.in
 pillow==9.5.0
     # via
     #   matplotlib
@@ -203,6 +213,10 @@ pyasn1==0.5.1
     #   rsa
 pyasn1-modules==0.3.0
     # via google-auth
+pydantic==2.9.2
+    # via pandera
+pydantic-core==2.23.4
+    # via pydantic
 pydeck==0.8.1b0
     # via streamlit
 pygments==2.15.1
@@ -288,10 +302,18 @@ toolz==0.12.0
     # via altair
 tornado==6.3.2
     # via streamlit
+typeguard==4.2.0
+    # via pandera
 typing-extensions==4.7.1
     # via
     #   altair
+    #   pydantic
+    #   pydantic-core
     #   streamlit
+    #   typeguard
+    #   typing-inspect
+typing-inspect==0.9.0
+    # via pandera
 tzdata==2023.3
     # via pandas
 urllib3==2.0.3

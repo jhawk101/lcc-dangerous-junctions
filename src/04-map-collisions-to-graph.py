@@ -19,19 +19,19 @@ def get_nearest_junction(row, tree):
 
 def main():
     # read in data params
-    params = yaml.load(open("params.yaml", "r"), Loader=Loader)
+    params = yaml.load(open("params_dft.yaml", "r"), Loader=Loader)
 
     tolerance = params["tolerance"]
     distance_threshold = params["distance_to_junction_threshold"]
 
     # read in data
-    collisions = pd.read_csv("data/pedestrian-and-cyclist-collisions.csv").rename(
-        columns={"collision_id": "collision_index"}
+    collisions = (
+        pd.read_parquet("data_dft/pedestrian-and-cyclist-collisions.pq")
+        .rename(columns={"accident_index": "collision_index"})
+        .dropna(subset=["latitude", "longitude"])
     )
 
-    junctions = pd.read_csv(
-        f"data/junctions-tolerance={tolerance}.csv", low_memory=False
-    )
+    junctions = pd.read_parquet(f"data_dft/junctions-tolerance={tolerance}.parquet")
 
     # Find nearest junction to each collision
     # Use BallTree algorithm.
@@ -54,9 +54,9 @@ def main():
     # filter to those within certain distance
     collisions = collisions[collisions["distance_to_junction"] <= distance_threshold]
 
-    collisions.to_csv(f"data/collisions-tolerance={tolerance}.csv", index=False)
+    collisions.to_csv(f"data_dft/collisions-tolerance={tolerance}.csv", index=False)
     collisions.to_parquet(
-        f"data/collisions-tolerance={tolerance}.parquet", engine="pyarrow"
+        f"data_dft/collisions-tolerance={tolerance}.parquet", engine="pyarrow"
     )
 
 
