@@ -133,3 +133,8 @@ dmypy.json
 
 # streamlit secrets
 .streamlit/secrets.toml
+
+# data
+data/
+data_dft/
+cache/
