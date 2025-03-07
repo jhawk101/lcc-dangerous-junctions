@@ -28,12 +28,12 @@ def read_in_data(params: dict = DATA_PARAMETERS) -> tuple:
 
     if ENVIRONMENT == "dev":
         junctions = pd.read_parquet(
-            f"data_dft/junctions-tolerance={tolerance}.parquet",
+            f"app_data/junctions-tolerance={tolerance}.parquet",
             engine="pyarrow",
             columns=params["junction_app_columns"],
         )
         collisions = pd.read_parquet(
-            f"data_dft/collisions-tolerance={tolerance}.parquet",
+            f"app_data/collisions-tolerance={tolerance}.parquet",
             engine="pyarrow",
             columns=params["collision_app_columns"],
         )
