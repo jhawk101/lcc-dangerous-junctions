@@ -1,4 +1,3 @@
-import os
 import yaml
 import folium
 import streamlit as st
@@ -25,14 +24,16 @@ def read_in_data(params: dict = DATA_PARAMETERS) -> tuple:
     Function to read in different data depending on tolerance requests.
     Reads from local if not on streamlit server, otherwise from google sheets.
     """
+    tolerance = DATA_PARAMETERS["tolerance"]
+
     if ENVIRONMENT == "dev":
         junctions = pd.read_parquet(
-            "data_dft/junctions-tolerance=15.parquet",
+            f"data_dft/junctions-tolerance={tolerance}.parquet",
             engine="pyarrow",
             columns=params["junction_app_columns"],
         )
         collisions = pd.read_parquet(
-            "data_dft/collisions-tolerance=15.parquet",
+            f"data_dft/collisions-tolerance={tolerance}.parquet",
             engine="pyarrow",
             columns=params["collision_app_columns"],
         )
@@ -419,7 +420,7 @@ def get_high_level_fg(
                 icon=DivIcon(
                     icon_size=(30, 30),
                     icon_anchor=(i, 11),
-                    html=f'<div style="font-size: 10pt; font-family: monospace; color: white">%s</div>'
+                    html='<div style="font-size: 10pt; font-family: monospace; color: white">%s</div>'
                     % str(rank),
                 ),
                 z_index_offset=1000 + (100 - rank),
@@ -548,7 +549,7 @@ def get_low_level_fg(
                 icon=DivIcon(
                     icon_size=(30, 30),
                     icon_anchor=(i, 11),
-                    html=f'<div style="font-size: 10pt; font-family: monospace; color: white">%s</div>'
+                    html='<div style="font-size: 10pt; font-family: monospace; color: white">%s</div>'
                     % str(rank),
                 ),
             )

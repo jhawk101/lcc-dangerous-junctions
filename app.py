@@ -1,9 +1,18 @@
-import time
+import os
 import psutil
 import logging
 import streamlit as st
+import numpy as np
 
-from src.app_functions import *
+from src.app_functions import (
+    combine_junctions_and_collisions,
+    calculate_dangerous_junctions,
+    create_base_map,
+    get_high_level_fg,
+    get_most_dangerous_junction_location,
+    get_low_level_fg,
+    read_in_data,
+)
 from streamlit_folium import st_folium
 
 st.set_page_config(layout="wide")
@@ -14,12 +23,7 @@ with open("./css/style.css") as f:
 
 st.markdown(
     """
-        <header class="css-18ni7ap ezrtsby2" tabindex="-1">
-        <div class="header">
-        <a href="https://lcc.org.uk/">
-        <img src="https://lcc.org.uk/wp-content/themes/lcc/src/img/svgs/logo-white.svg" alt="London Cycling Campaign logo" class="logo">
-        </a>
-        <h1 class="title">Dangerous <br/> Junctions Tool</h1>
+        <h1 class="title"Bradford Dangerous <br/> Junctions Tool</h1>
         </div>
         </header>
     """,
@@ -178,7 +182,7 @@ with st.expander("App settings", expanded=True):
         )
 
 
-st.markdown(f"""
+st.markdown("""
     #### Danger Metrics
             
     Junctions ranked from most to least dangerous

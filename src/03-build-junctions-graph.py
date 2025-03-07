@@ -142,14 +142,14 @@ def main():
 
     # build initial junctions graph
     print("Building initial junction graph")
-    # G1 = ox.graph_from_place(
-    #     "Bradford, UK",
-    #     network_type="drive",
-    #     simplify=True,
-    #     clean_periphery=True,
-    # )
+    G1 = ox.graph_from_place(
+        "Bradford, UK",
+        network_type="drive",
+        simplify=True,
+        clean_periphery=True,
+    )
     # for testing use:
-    G1 = ox.graph_from_address("Bradford, UK", network_type="drive", dist=1000)
+    # G1 = ox.graph_from_address("Bradford, UK", network_type="drive", dist=1000)
 
     # simplify graph using the consolidate_intersections()
     print("Consolidating intersections")
