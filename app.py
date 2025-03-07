@@ -64,7 +64,7 @@ with st.expander("App settings", expanded=True):
         with col1:
             casualty_type = st.radio(
                 label="Select casualty type",
-                options=["cyclist", "pedestrian"],
+                options=["pedestrian", "cyclist"],
                 format_func=lambda x: f"{x}s",
                 horizontal=True,
             )
@@ -73,7 +73,7 @@ with st.expander("App settings", expanded=True):
                 label="Number of dangerous junctions to show",
                 min_value=10,
                 max_value=100,  # not sure we'd ever need to view more then 100?
-                value=20,
+                value=50,
                 step=10,
             )
         # with col3:
