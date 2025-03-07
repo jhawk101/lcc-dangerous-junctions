@@ -23,7 +23,12 @@ with open("./css/style.css") as f:
 
 st.markdown(
     """
-        <h1 class="title"Bradford Dangerous <br/> Junctions Tool</h1>
+        <header>
+        <div class="header">
+        <a href="https://www.livingstreets.org.uk/">
+        <img src="https://www.livingstreets.org.uk/media/idopz3eg/living-streets-local-group-logo.jpg" alt="Living Streets logo" class="logo">
+        </a>
+        <h1 class="title">Shipley & Saltaire Living Streets </br> Dangerous Junctions Tool</h1>
         </div>
         </header>
     """,

@@ -6,8 +6,8 @@
     height: 6.5rem;
     max-width: 20%;
     z-index: 999991;
-    background-color: #e30613;
-    border: 1.5vw solid #e30613;
+    /* background-color: #e30613; */
+    /* border: 1.5vw solid #e30613; */
 }
 
 /* sets the position of the title */
