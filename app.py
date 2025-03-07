@@ -32,19 +32,19 @@ st.markdown(
 
 
 @st.dialog(
-    "Welcome to the London Cycling Campaign's Dangerous Junctions Tool", width="large"
+    "Welcome to Shipley and Saltaire Living Streets' Dangerous Junctions Tool",
+    width="large",
 )
 def open_pop_up():
     st.markdown("""
-        The tool displays the most dangerous junctions in London for either
+        The tool displays the most dangerous junctions in Bradford for either
         cyclists or pedestrians, depending on the settings selected.
-        It's designed to assist the LCC and other organisations campaign for
+        It was originally designed to assist the London Cycling Campaign and other organisations campaign for
         improvements to road networks in London, helping make junctions
         safer for both cyclists and pedestrians.
-
-        *__New for 2024:__*
-        - Data now covers 2019 to 2023
-        - Slightly adjusted fatal, serious & slight collision weights (see 'About this app')
+                
+        This version has been adapted for Bradford and the surrounding area by Shipley and Saltaire Living Streets.
+        It uses 10 years of collision data, more than the 5 in London's version, due to the lower number of collisions.
     """)
 
 
@@ -227,17 +227,17 @@ with st.expander("About this app"):
 
     with col1:
         st.write("""
-            ##### LCC's dangerous junctions tool
+            ##### Shipley and Saltaire Living Streets' dangerous junctions tool
                  
-            Welcome to the London Cycling Campaign's Dangerous Junctions tool. The tool displays the most dangerous
-            junctions in London for either cyclists or pedestrians, depending on the settings you've selected. You can
-            also filter to specific boroughs or change the number of junctions displayed using the options in the panel at
-            the top of the page. It's designed to assist LCC and other organisations to campaign for improvements to road networks in London, helping to make junctions safer
+            Welcome to the Shipley and Saltaire Living Streets' Dangerous Junctions tool. The tool displays the most dangerous
+            junctions in Bradford for either cyclists or pedestrians, depending on the settings you've selected. You can
+            change the number of junctions displayed using the options in the panel at
+            the top of the page. It's designed to assist Living Streets and other organisations to campaign for improvements to road networks in Bradford, helping to make junctions safer
             for both cyclists and pedestrians.
 
             The 'dangerous junctions' map to the top left plots the top junctions, ranked in descending order from most to least dangerous.
             By clicking on a junction you can find more information about it. The ranking can also be viewed via
-            the table below the maps, which also includes the (non recency weighted) danger metric for the last 5 years to help
+            the table below the maps, which also includes the (non recency weighted) danger metric for the last 10 years to help
             spot trends.
 
             Selecting a junction on the 'dangerous junctions' map updates the 'investigate junction' map to
@@ -249,24 +249,25 @@ with st.expander("About this app"):
                 
             ##### The data
                  
-            The collision data is sourced from the TfL collision extracts,
-            which can be [accessed here](https://tfl.gov.uk/corporate/publications-and-reports/road-safety) and includes all
-            collisions involving a cyclist or pedestrian from 2019 to 2023. The junction data is generated using the
+            The collision data is sourced from the Dept for Transport collision extracts,
+            which can be [accessed here](https://www.gov.uk/government/statistical-data-sets/reported-road-accidents-vehicles-and-casualties-tables-for-great-britain)
+            and includes all collisions involving a cyclist or pedestrian from 2014 to 2023. The junction data is generated using the
             [OSMnx package](https://github.com/gboeing/osmnx) that relies on OpenStreetMap data.
                 
             ##### Contact
 
-            This app was made by [Daniel Hills](https://danielhills.github.io/) on behalf of the LCC. For any questions, 
-            feedback or bug reports, email: [djmapping@lcc.org.uk](mailto:djmapping@lcc.org.uk)
+            This app was adapted by [Jonny Hawkins](https://github.com/jhawk101/) for Shipley and Saltaire Living Streets.
+            The original app was made by [Daniel Hills](https://danielhills.github.io/) on behalf of the LCC. For any questions, 
+            feedback or bug reports, email: [S&S Living Streets](mailto:shipleyandsaltairegroup@livingstreets.org.uk)
         """)
 
     with col2:
         st.markdown("""
             ##### The approach
                     
-            The most dangerous junctions in London are identified as follows:
-            1. Generate a network of all junctions in London
-            2. Consolidate the junctions to a level that make sense. For example, at Trafalgar Square
+            The most dangerous junctions in Bradford are identified as follows:
+            1. Generate a network of all junctions in Bradford
+            2. Consolidate the junctions to a level that make sense. For example, at Leeds Rd-Shipley Airedale Rd
             we'd ideally want to assess the danger of the junction as a whole,
             rather than each individual pedestrian crossings and intersections that make up the junction
             3. Map each collision to its nearest junction based on coordinate data
@@ -299,7 +300,7 @@ with st.expander("About this app"):
                     
             The ability to drill down into a junction and assess the individual collisions
             in combination with user domain knowledge should still make this a very useful tool
-            in assessing the danger of junctions in London.
+            in assessing the danger of junctions in Bradford.
         """)
 
 
