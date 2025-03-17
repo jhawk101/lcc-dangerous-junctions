@@ -126,20 +126,15 @@ with st.expander("App settings", expanded=True):
 
     col1, col2 = st.columns([6, 6])
     with col1:
-        # if "ALL" in boroughs:
-        #     borough_msg = "all boroughs"
-        # else:
-        #     borough_msg = ", ".join([b.capitalize() for b in boroughs])
+        st.markdown(f"""
+            #### Dangerous Junctions
 
-        # st.markdown(f"""
-        #     #### Dangerous Junctions
-
-        #     Map shows the {n_junctions} most dangerous junctions in {borough_msg} from {min_year} to {max_year}.
-        # """)
+            Map shows the ranking of the {n_junctions} most dangerous junctions in Bradford from {min_year} to {max_year}.
+        """)
 
         high_map = create_base_map(
             initial_location=[53.799999, -1.750000], initial_zoom=10
-        )  # set to trafalgar sq.
+        )  # set to Bradford Town Hall
 
         high_feature_group = get_high_level_fg(
             dangerous_junctions, junction_collisions, n_junctions
@@ -218,7 +213,7 @@ st.dataframe(
         f"slight_{casualty_type}_casualties": f"Slight {casualty_type} collisions",
         "yearly_danger_metrics": st.column_config.LineChartColumn(
             "Yearly danger metrics (past 5 years)",
-            help="Last 5 years of danger metrics (recency scaled removed)",
+            help="Last 10 years of danger metrics (recency scaled removed)",
             y_min=0,
             y_max=10,
         ),

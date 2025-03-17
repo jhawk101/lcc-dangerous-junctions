@@ -4,6 +4,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import matplotlib as mpl
 
 from yaml import Loader
 from pympler import asizeof
@@ -290,15 +291,11 @@ def get_html_colors(n: int) -> list:
     """
     Function to get n html colour codes along a continuous gradient
     """
-    p = sns.color_palette(
-        "gist_heat", n + 5
-    )  # + 5 to force the palette to ignore the lighter colours at end
-    p.as_hex()
+    x = 1 - np.linspace(0.0, 1.0, n)
 
-    p = [[int(i * 255) for i in c] for c in p[:]]
-    html_p = ["#{0:02x}{1:02x}{2:02x}".format(c[0], c[1], c[2]) for c in p[:]]
+    rgb = mpl.colormaps["YlOrRd"](x)
 
-    return html_p
+    return [mpl.colors.rgb2hex(i) for i in rgb]
 
 
 @st.cache_data(show_spinner=False, ttl=3 * 60, max_entries=5)
@@ -401,7 +398,7 @@ def get_high_level_fg(
         fg.add_child(
             folium.CircleMarker(
                 location=[lat, lon],
-                radius=10,
+                radius=10 if rank > 10 else 15,
                 color=pal[rank - 1],
                 fill_color=pal[rank - 1],
                 fill_opacity=1,
